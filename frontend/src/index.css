@@ -1,0 +1,23 @@
+@import "tailwindcss";
+
+/* Font definitions - no @import statements */
+body {
+  font-family: "Plus Jakarta Sans", system-ui, -apple-system, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Apply Space Grotesk to all headings */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: "Space Grotesk", sans-serif;
+}
+
+/* Specific style for wallet address inputs */
+input[name="wallet_address"] {
+  font-family: "JetBrains Mono", monospace;
+}

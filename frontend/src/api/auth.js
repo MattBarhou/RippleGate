@@ -1,0 +1,36 @@
+import axios from "axios";
+
+const API_URL = "http://localhost:5000/api/auth";
+
+// Create an axios instance with default settings
+const api = axios.create({
+  baseURL: API_URL,
+  withCredentials: true,
+  headers: {
+    "Content-Type": "application/json",
+  },
+});
+
+export const register = async (userData) => {
+  try {
+    const response = await api.post(`${API_URL}/register`, userData, {
+      withCredentials: true,
+    });
+    return response;
+  } catch (error) {
+    console.error("Registration error:", error);
+    return error.response || { status: 500 };
+  }
+};
+
+export const login = async (userData) => {
+  try {
+    const response = await api.post(`${API_URL}/login`, userData, {
+      withCredentials: true,
+    });
+    return response;
+  } catch (error) {
+    console.error("Login error:", error);
+    return error.response || { status: 500 };
+  }
+};
