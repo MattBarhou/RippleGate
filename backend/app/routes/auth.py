@@ -8,6 +8,21 @@ load_dotenv()
 
 auth = Blueprint('auth', __name__)
 
+@auth.route('/me', methods=['GET'])
+def me():
+    token = request.cookies.get('token')
+    if not token:
+        return jsonify({"message": "Unauthorized"}), 401
+    
+    data = decode(token, os.getenv("JWT_SECRET"), algorithms=["HS256"])
+    user = User.query.filter_by(id=data["user_id"]).first()
+    return jsonify({
+        "user_id": user.id,
+        "email": user.email,
+        "profile_picture": user.profile_picture,
+        "wallet_address": user.wallet_address
+    }), 200
+
 @auth.route('/register', methods=['POST', 'OPTIONS'])
 def register():
     if request.method == 'OPTIONS':
@@ -71,6 +86,35 @@ def login():
         response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization')
         response.headers.add('Access-Control-Allow-Credentials', 'true')
         return response, 200
+    
+    try:
+        data = request.get_json()
+        email = data.get('email')
+        password = data.get('password')
         
-    # Implement login logic here
-    return jsonify({"message": "Login endpoint"}), 200 
+        user = User.query.filter_by(email=email).first()
+
+        if not user:
+            return jsonify({"message": "Invalid email or password"}), 401
+    
+        if not bcrypt.check_password_hash(user.password, password):
+            return jsonify({"message": "Invalid email or password"}), 401
+    
+        token = encode(
+            {"user_id": user.id, "email": email},
+            os.getenv("JWT_SECRET"),
+            algorithm="HS256"
+        )
+
+        resp = make_response(jsonify({
+            "message": "Login successful",
+            "token": token,
+            "user_id": user.id,
+            "email": email
+        }), 200)
+
+        resp.set_cookie("token", token, httponly=True, secure=False, samesite="None")
+        return resp
+        
+    except Exception as e:
+        return jsonify({"message": f"Server error: {str(e)}"}), 500

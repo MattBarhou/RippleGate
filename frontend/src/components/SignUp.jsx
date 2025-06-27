@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState } from "react";
 import {
   FaEnvelope,
   FaLock,
@@ -6,11 +6,11 @@ import {
   FaArrowRight,
   FaCheckCircle,
 } from "react-icons/fa";
-import { MdCloudUpload } from "react-icons/md";
 import { RiShieldKeyholeLine } from "react-icons/ri";
 import { register } from "../api/auth";
 import { trimUserData } from "../helper";
 import { useNavigate } from "react-router-dom";
+import ImageUploader from "./ImageUploader";
 
 export default function SignUp() {
   const [userData, setUserData] = useState({
@@ -24,15 +24,13 @@ export default function SignUp() {
   const [showNotification, setShowNotification] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
-  const fileInputRef = useRef(null);
   const navigate = useNavigate();
 
   const handleChange = (e) => {
     setUserData({ ...userData, [e.target.name]: e.target.value });
   };
 
-  const handleFileChange = (e) => {
-    const file = e.target.files[0];
+  const handleImageChange = (file) => {
     if (file) {
       setUserData({ ...userData, profile_picture: file.name });
       const reader = new FileReader();
@@ -50,6 +48,16 @@ export default function SignUp() {
 
     const trimmedUserData = trimUserData(userData);
 
+    if (
+      trimmedUserData.wallet_address.length < 25 ||
+      trimmedUserData.wallet_address.length > 35
+    ) {
+      setErrorMessage(
+        "Invalid wallet address, must be between 25 and 35 characters"
+      );
+      setIsLoading(false);
+      return;
+    }
     try {
       const response = await register(trimmedUserData);
 
@@ -57,7 +65,7 @@ export default function SignUp() {
         setShowNotification(true);
         setTimeout(() => {
           setShowNotification(false);
-          navigate("/mainDashboard");
+          navigate("/main-dashboard");
         }, 3000);
       } else {
         if (response && response.data && response.data.message) {
@@ -104,28 +112,12 @@ export default function SignUp() {
 
         <form onSubmit={handleSubmit} className="space-y-5">
           {/* Profile Picture Upload */}
-          <div
-            onClick={() => fileInputRef.current.click()}
-            className="w-28 h-28 mx-auto mb-6 rounded-full border-2 border-dashed border-purple-400 flex items-center justify-center cursor-pointer hover:border-cyan-400 transition-colors group overflow-hidden relative"
-          >
-            {profilePreview ? (
-              <img
-                src={profilePreview}
-                alt="Profile Preview"
-                className="w-full h-full object-cover"
-              />
-            ) : (
-              <div className="flex flex-col items-center text-gray-300 group-hover:text-cyan-400">
-                <MdCloudUpload className="text-3xl mb-1" />
-                <span className="text-xs">Profile Picture</span>
-              </div>
-            )}
-            <input
-              type="file"
-              ref={fileInputRef}
-              onChange={handleFileChange}
-              className="hidden"
-              accept="image/*"
+          <div className="flex justify-center mb-6">
+            <ImageUploader
+              imagePreview={profilePreview}
+              onImageChange={handleImageChange}
+              height="h-28"
+              label="Profile Picture"
             />
           </div>
 

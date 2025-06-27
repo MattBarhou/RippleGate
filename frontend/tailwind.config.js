@@ -1,6 +1,11 @@
+import { withOptions } from "tailwindcss";
+
 /** @type {import('tailwindcss').Config} */
-export default {
-  content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
+export default withOptions({
+  content: [
+    "./index.html",
+    "./src/**/*.{js,jsx,ts,tsx}", // Make sure this includes all your component files
+  ],
   theme: {
     extend: {
       fontFamily: {
@@ -58,6 +63,10 @@ export default {
           "0%": { opacity: "0" },
           "100%": { opacity: "1" },
         },
+        "fade-down": {
+          "0%": { opacity: "0", transform: "translateY(-10px)" },
+          "100%": { opacity: "1", transform: "translateY(0)" },
+        },
       },
       animation: {
         "notification-slide-in":
@@ -67,8 +76,9 @@ export default {
         "notification-text-fade":
           "notification-text-fade 0.5s ease-out forwards",
         "fade-in": "fade-in 0.3s ease-out forwards",
+        "fade-down": "fade-down 0.2s ease-out forwards",
       },
     },
   },
   plugins: [],
-};
+});

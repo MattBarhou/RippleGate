@@ -2,16 +2,33 @@ import { useState } from "react";
 import { FaEnvelope, FaLock, FaArrowRight } from "react-icons/fa";
 import { RiShieldKeyholeLine } from "react-icons/ri";
 import { useNavigate } from "react-router-dom";
+import { login } from "../api/auth";
 
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Handle login logic here
-    console.log({ email, password });
+
+    if (!email || !password) {
+      alert("Please fill in all fields");
+      return;
+    }
+
+    const userData = { email, password };
+
+    try {
+      const response = await login(userData);
+      if (response.status === 200) {
+        navigate("/dashboard");
+      } else {
+        alert("Invalid email or password");
+      }
+    } catch (error) {
+      console.log({ email, password });
+    }
   };
 
   return (
