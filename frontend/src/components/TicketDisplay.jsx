@@ -263,13 +263,18 @@ export default function TicketDisplay({ ticket }) {
         <div className="mt-3 pt-3 border-t border-purple-500/20">
           <span className="text-xs text-gray-500">
             Purchased:{" "}
-            {new Date(ticket.created_at).toLocaleDateString("en-US", {
-              month: "short",
-              day: "numeric",
-              year: "numeric",
-              hour: "2-digit",
-              minute: "2-digit",
-            })}
+            {(() => {
+              const purchaseDate = new Date(ticket.created_at);
+              // Ensure we're displaying in local timezone
+              return purchaseDate.toLocaleString("en-US", {
+                month: "short",
+                day: "numeric",
+                year: "numeric",
+                hour: "2-digit",
+                minute: "2-digit",
+                timeZoneName: "short",
+              });
+            })()}
           </span>
         </div>
       </div>

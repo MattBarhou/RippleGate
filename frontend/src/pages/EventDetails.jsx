@@ -15,6 +15,7 @@ import Navbar from "../components/Navbar";
 import { getEvents } from "../api/events";
 import { buyTicket } from "../api/tickets";
 import { toast } from "react-toastify";
+import { fetchCurrentUser } from "../api/auth";
 
 function EventDetails() {
   const { id } = useParams();
@@ -23,9 +24,15 @@ function EventDetails() {
   const [loading, setLoading] = useState(true);
   const [purchasing, setPurchasing] = useState(false);
   const [error, setError] = useState(null);
+  const [user, setUser] = useState(null);
 
-  // For demo purposes, using user ID 1. In a real app, this would come from auth context
-  const userId = 1;
+  useEffect(() => {
+    const fetchUser = async () => {
+      const response = await fetchCurrentUser();
+      setUser(response.data);
+    };
+    fetchUser();
+  }, []);
 
   // memoize the fetchEventDetails function
   const fetchEventDetails = useCallback(async () => {
@@ -57,7 +64,7 @@ function EventDetails() {
 
     setPurchasing(true);
     try {
-      const result = await buyTicket(event.id, userId);
+      const result = await buyTicket(event.id, user.user_id);
       toast.success("Ticket purchased successfully! NFT minted on XRPL.");
 
       // Refresh event data to update ticket count

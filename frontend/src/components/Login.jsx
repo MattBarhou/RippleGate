@@ -3,6 +3,7 @@ import { FaEnvelope, FaLock, FaArrowRight } from "react-icons/fa";
 import { RiShieldKeyholeLine } from "react-icons/ri";
 import { useNavigate } from "react-router-dom";
 import { login } from "../api/auth";
+import { toast } from "react-toastify";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -22,9 +23,10 @@ export default function Login() {
     try {
       const response = await login(userData);
       if (response.status === 200) {
-        navigate("/dashboard");
+        navigate("/main-dashboard");
+        toast.success("Login successful");
       } else {
-        alert("Invalid email or password");
+        toast.error("Invalid email or password");
       }
     } catch (error) {
       console.log({ email, password });

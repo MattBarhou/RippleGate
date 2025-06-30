@@ -59,3 +59,15 @@ export const getUserNFTs = async (walletAddress) => {
     throw error.response?.data || error.message;
   }
 };
+
+// Get recent ticket activity
+export const getRecentActivity = async () => {
+  try {
+    const response = await axios.get(`${API_URL}activity`, {
+      withCredentials: true,
+    });
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || error.message;
+  }
+};

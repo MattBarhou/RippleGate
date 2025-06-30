@@ -1,27 +1,65 @@
 import React, { useState, useEffect } from "react";
-import { FaTicketAlt, FaSpinner, FaExclamationTriangle } from "react-icons/fa";
+import {
+  FaTicketAlt,
+  FaSpinner,
+  FaExclamationTriangle,
+  FaArrowLeft,
+} from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import TicketDisplay from "../components/TicketDisplay";
 import { getUserTickets } from "../api/tickets";
+import { fetchCurrentUser } from "../api/auth";
 import { toast } from "react-toastify";
 
 export default function MyTickets() {
   const [tickets, setTickets] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [user, setUser] = useState(null);
+  const [userLoading, setUserLoading] = useState(true);
+  const [authError, setAuthError] = useState(null);
+  const navigate = useNavigate();
 
-  // For demo purposes, using user ID 1. In a real app, this would come from auth context
-  const userId = 1;
+  console.log(user);
 
   useEffect(() => {
-    fetchUserTickets();
+    const fetchUser = async () => {
+      try {
+        setUserLoading(true);
+        setAuthError(null);
+        const response = await fetchCurrentUser();
+        setUser(response.data);
+      } catch (error) {
+        console.error("Authentication error:", error);
+        setAuthError(error.message || "Authentication failed");
+        toast.error("Please login to view your tickets");
+      } finally {
+        setUserLoading(false);
+      }
+    };
+    fetchUser();
   }, []);
 
+  useEffect(() => {
+    if (user && user.user_id) {
+      fetchUserTickets();
+    } else if (!userLoading && !authError) {
+      setLoading(false);
+    }
+  }, [user, userLoading, authError]);
+
   const fetchUserTickets = async () => {
+    if (!user || !user.user_id) {
+      setError("User not authenticated");
+      setLoading(false);
+      return;
+    }
+
     try {
       setLoading(true);
       setError(null);
-      const userTickets = await getUserTickets(userId);
+      const userTickets = await getUserTickets(user.user_id);
       setTickets(userTickets);
     } catch (err) {
       setError(err.error || "Failed to fetch tickets");
@@ -32,14 +70,88 @@ export default function MyTickets() {
   };
 
   const handleRefresh = () => {
-    fetchUserTickets();
+    if (user && user.user_id) {
+      fetchUserTickets();
+    }
   };
+
+  const handleBackToDashboard = () => {
+    navigate("/main-dashboard");
+  };
+
+  // Show authentication error
+  if (authError) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-purple-900 via-black to-cyan-900">
+        <Navbar />
+        <div className="max-w-6xl mx-auto px-4 py-8">
+          {/* Back Button */}
+          <button
+            onClick={handleBackToDashboard}
+            className="flex items-center cursor-pointer gap-2 mb-6 px-3 py-2 rounded-lg bg-black/20 text-gray-300 hover:text-white hover:bg-black/30 transition-all border border-gray-600/30 hover:border-gray-500/50"
+          >
+            <FaArrowLeft className="text-sm" />
+            <span>Back to Dashboard</span>
+          </button>
+
+          <div className="flex flex-col items-center justify-center py-12">
+            <FaExclamationTriangle className="text-red-400 text-4xl mb-4" />
+            <h3 className="text-xl font-medium text-red-400 mb-2">
+              Authentication Required
+            </h3>
+            <p className="text-gray-400 text-center max-w-md mb-4">
+              Please login to view your tickets.
+            </p>
+            <button
+              onClick={() => (window.location.href = "/login")}
+              className="px-4 py-2 rounded-xl bg-purple-500/20 text-purple-400 border border-purple-500/30 hover:border-purple-400/50 transition-all"
+            >
+              Go to Login
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Show loading state while fetching user
+  if (userLoading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-purple-900 via-black to-cyan-900">
+        <Navbar />
+        <div className="max-w-6xl mx-auto px-4 py-8">
+          {/* Back Button */}
+          <button
+            onClick={handleBackToDashboard}
+            className="flex items-center cursor-pointer gap-2 mb-6 px-3 py-2 rounded-lg bg-black/20 text-gray-300 hover:text-white hover:bg-black/30 transition-all border border-gray-600/30 hover:border-gray-500/50"
+          >
+            <FaArrowLeft className="text-sm" />
+            <span>Back to Dashboard</span>
+          </button>
+
+          <div className="flex flex-col items-center justify-center py-12">
+            <FaSpinner className="text-cyan-400 text-4xl animate-spin mb-4" />
+            <p className="text-gray-400">Authenticating...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-900 via-black to-cyan-900">
       <Navbar />
 
       <div className="max-w-6xl mx-auto px-4 py-8">
+        {/* Back Button */}
+        <button
+          onClick={handleBackToDashboard}
+          className="flex items-center cursor-pointer gap-2 mb-6 px-3 py-2 rounded-lg bg-black/20 text-gray-300 hover:text-white hover:bg-black/30 transition-all border border-gray-600/30 hover:border-gray-500/50"
+        >
+          <FaArrowLeft className="text-sm" />
+          <span>Back to Dashboard</span>
+        </button>
+
         {/* Header */}
         <div className="text-center mb-8">
           <div className="flex items-center justify-center gap-3 mb-4">
@@ -58,8 +170,8 @@ export default function MyTickets() {
         <div className="flex justify-center mb-6">
           <button
             onClick={handleRefresh}
-            disabled={loading}
-            className="flex items-center gap-2 px-4 py-2 rounded-xl bg-gradient-to-r from-purple-500/20 to-cyan-500/20 text-white border border-purple-500/30 hover:border-cyan-400/50 transition-all font-medium disabled:opacity-50"
+            disabled={loading || !user}
+            className="flex items-center cursor-pointer gap-2 px-4 py-2 rounded-xl bg-gradient-to-r from-purple-500/20 to-cyan-500/20 text-white border border-purple-500/30 hover:border-cyan-400/50 transition-all font-medium disabled:opacity-50"
           >
             {loading ? <FaSpinner className="animate-spin" /> : <FaTicketAlt />}
             <span>{loading ? "Loading..." : "Refresh Tickets"}</span>

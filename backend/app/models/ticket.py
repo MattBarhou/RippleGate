@@ -24,7 +24,7 @@ class Ticket(db.Model):
             'nft_id': self.nft_id,
             'transaction_hash': self.transaction_hash,
             'status': self.status,
-            'created_at': self.created_at.strftime('%Y-%m-%d %H:%M:%S'),
+            'created_at': self.created_at.isoformat() + 'Z',
             'event': self.event.to_json() if self.event else None,
             'user_wallet': self.user.wallet_address if self.user else None
         }

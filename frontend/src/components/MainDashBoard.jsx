@@ -1,5 +1,6 @@
 import Navbar from "./Navbar";
 import EventList from "./EventList";
+import Activity from "./Activity";
 import { FaTicketAlt, FaHistory } from "react-icons/fa";
 
 export default function MainDashboard() {
@@ -29,7 +30,7 @@ export default function MainDashboard() {
               <FaHistory className="text-xl text-cyan-400" />
               <h2 className="text-xl font-display text-white">Activity</h2>
             </div>
-            <p className="text-gray-300">No recent activity</p>
+            <Activity />
           </div>
         </div>
       </div>

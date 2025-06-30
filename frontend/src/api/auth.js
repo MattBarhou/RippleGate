@@ -34,3 +34,15 @@ export const login = async (userData) => {
     return error.response || { status: 500 };
   }
 };
+
+export const fetchCurrentUser = async () => {
+  try {
+    const response = await api.get(`${API_URL}/me`, {
+      withCredentials: true,
+    });
+    return response;
+  } catch (error) {
+    console.error("Fetch user error:", error);
+    throw error.response?.data || error;
+  }
+};

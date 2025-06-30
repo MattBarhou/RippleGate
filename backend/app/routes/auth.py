@@ -8,20 +8,34 @@ load_dotenv()
 
 auth = Blueprint('auth', __name__)
 
-@auth.route('/me', methods=['GET'])
+@auth.route('/me', methods=['GET', 'OPTIONS'])
 def me():
+    if request.method == 'OPTIONS':
+        response = make_response()
+        response.headers.add('Access-Control-Allow-Origin', 'http://localhost:5173')
+        response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization')
+        response.headers.add('Access-Control-Allow-Credentials', 'true')
+        return response, 200
+    
     token = request.cookies.get('token')
     if not token:
         return jsonify({"message": "Unauthorized"}), 401
     
-    data = decode(token, os.getenv("JWT_SECRET"), algorithms=["HS256"])
-    user = User.query.filter_by(id=data["user_id"]).first()
-    return jsonify({
-        "user_id": user.id,
-        "email": user.email,
-        "profile_picture": user.profile_picture,
-        "wallet_address": user.wallet_address
-    }), 200
+    try:
+        data = decode(token, os.getenv("JWT_SECRET"), algorithms=["HS256"])
+        user = User.query.filter_by(id=data["user_id"]).first()
+        
+        if not user:
+            return jsonify({"message": "User not found"}), 401
+            
+        return jsonify({
+            "user_id": user.id,
+            "email": user.email,
+            "profile_picture": user.profile_picture,
+            "wallet_address": user.wallet_address
+        }), 200
+    except Exception as e:
+        return jsonify({"message": "Invalid token"}), 401
 
 @auth.route('/register', methods=['POST', 'OPTIONS'])
 def register():
@@ -71,7 +85,7 @@ def register():
             "email": email
         }), 200)
 
-        resp.set_cookie("token", token, httponly=True, secure=False, samesite="None")
+        resp.set_cookie("token", token, httponly=True, secure=False, samesite="Lax")
         return resp
         
     except Exception as e:
@@ -113,7 +127,7 @@ def login():
             "email": email
         }), 200)
 
-        resp.set_cookie("token", token, httponly=True, secure=False, samesite="None")
+        resp.set_cookie("token", token, httponly=True, secure=False, samesite="Lax")
         return resp
         
     except Exception as e:

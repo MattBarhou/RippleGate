@@ -150,3 +150,47 @@ def get_user_nfts(wallet_address):
             
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+
+@tickets.route('/activity', methods=['GET'])
+def get_recent_activity():
+    if request.method == 'OPTIONS':
+        return handle_options()
+    
+    try:
+        # Get recent tickets with user and event info, limit to 20 most recent
+        recent_tickets = db.session.query(Ticket, User, Event)\
+            .join(User, Ticket.user_id == User.id)\
+            .join(Event, Ticket.event_id == Event.id)\
+            .order_by(Ticket.created_at.desc())\
+            .limit(20)\
+            .all()
+        
+        activity_data = []
+        for ticket, user, event in recent_tickets:
+            # Get user's name from email (part before @)
+            user_name = user.email.split('@')[0] if user.email else 'Anonymous'
+            
+            activity_data.append({
+                'id': ticket.id,
+                'user_name': user_name,
+                'user_email': user.email,
+                'event_name': event.title,
+                'event_id': event.id,
+                'ticket_price': ticket.price,
+                'status': ticket.status,
+                'created_at': ticket.created_at.isoformat() + 'Z',
+                'nft_id': ticket.nft_id,
+                'event_date': event.date.strftime('%Y-%m-%d') if event.date else None,
+                'event_location': event.location
+            })
+        
+        return jsonify({
+            'success': True,
+            'activity': activity_data
+        }), 200
+        
+    except Exception as e:
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 500
