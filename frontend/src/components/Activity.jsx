@@ -8,40 +8,7 @@ import {
 } from "react-icons/fa";
 import { getRecentActivity } from "../api/tickets";
 import { toast } from "react-toastify";
-
-// Function to format relative time
-const formatRelativeTime = (timestamp) => {
-  const now = new Date();
-  const activityTime = new Date(timestamp);
-  const diffInSeconds = Math.floor((now - activityTime) / 1000);
-
-  if (diffInSeconds < 60) {
-    return "just now";
-  } else if (diffInSeconds < 3600) {
-    const minutes = Math.floor(diffInSeconds / 60);
-    return `${minutes} ${minutes === 1 ? "minute" : "minutes"} ago`;
-  } else if (diffInSeconds < 86400) {
-    const hours = Math.floor(diffInSeconds / 3600);
-    return `${hours} ${hours === 1 ? "hour" : "hours"} ago`;
-  } else {
-    const days = Math.floor(diffInSeconds / 86400);
-    return `${days} ${days === 1 ? "day" : "days"} ago`;
-  }
-};
-
-// Function to get status color
-const getStatusColor = (status) => {
-  switch (status) {
-    case "confirmed":
-      return "text-green-400";
-    case "pending":
-      return "text-yellow-400";
-    case "failed":
-      return "text-red-400";
-    default:
-      return "text-gray-400";
-  }
-};
+import { getStatusColor, formatRelativeTime } from "../helper";
 
 export default function Activity() {
   const [activities, setActivities] = useState([]);

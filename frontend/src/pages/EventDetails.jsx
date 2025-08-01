@@ -10,6 +10,7 @@ import {
   FaArrowLeft,
   FaCheckCircle,
   FaUsers,
+  FaUserTie,
 } from "react-icons/fa";
 import Navbar from "../components/Navbar";
 import { getEvents } from "../api/events";
@@ -225,6 +226,19 @@ function EventDetails() {
 
             {/* Event Info */}
             <div className="space-y-4 mb-8">
+              {/* Host Information */}
+              {event.host_name && (
+                <div className="flex items-center text-gray-300">
+                  <FaUserTie className="text-cyan-400 mr-3 w-5" />
+                  <span className="text-lg">
+                    Hosted by{" "}
+                    <span className="font-medium text-purple-400">
+                      {event.host_name}
+                    </span>
+                  </span>
+                </div>
+              )}
+
               <div className="flex items-center text-gray-300">
                 <FaMapMarkerAlt className="text-cyan-400 mr-3 w-5" />
                 <span className="text-lg">{event.location}</span>

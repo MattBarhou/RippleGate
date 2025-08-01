@@ -265,7 +265,7 @@ export default function TicketDisplay({ ticket }) {
             Purchased:{" "}
             {(() => {
               const purchaseDate = new Date(ticket.created_at);
-              // Ensure we're displaying in local timezone
+              // displaying in local timezone
               return purchaseDate.toLocaleString("en-US", {
                 month: "short",
                 day: "numeric",

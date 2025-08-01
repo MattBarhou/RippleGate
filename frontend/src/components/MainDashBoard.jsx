@@ -1,7 +1,8 @@
 import Navbar from "./Navbar";
 import EventList from "./EventList";
 import Activity from "./Activity";
-import { FaTicketAlt, FaHistory } from "react-icons/fa";
+import QuickStats from "./QuickStats";
+import { FaHistory } from "react-icons/fa";
 
 export default function MainDashboard() {
   return (
@@ -17,13 +18,8 @@ export default function MainDashboard() {
             <EventList />
           </div>
 
-          <div className="bg-black/30 backdrop-blur-lg rounded-3xl p-6 border border-purple-500/20 shadow-xl">
-            <div className="flex items-center gap-2 mb-4">
-              <FaTicketAlt className="text-xl text-cyan-400" />
-              <h2 className="text-xl font-display text-white">My Tickets</h2>
-            </div>
-            <p className="text-gray-300">No tickets purchased yet</p>
-          </div>
+          {/* Quick Stats Component */}
+          <QuickStats />
 
           <div className="bg-black/30 backdrop-blur-lg rounded-3xl p-6 border border-purple-500/20 shadow-xl">
             <div className="flex items-center gap-2 mb-4">

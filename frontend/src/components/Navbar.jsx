@@ -24,12 +24,12 @@ export default function Navbar() {
   };
 
   const navItems = [
-    {
-      name: "Profile",
-      path: "/profile",
-      icon: <FaUser />,
-      onClick: null,
-    },
+    // {
+    //   name: "Profile",
+    //   path: "/profile",
+    //   icon: <FaUser />,
+    //   onClick: null,
+    // },
     {
       name: "My Tickets",
       path: "/tickets",
@@ -49,7 +49,7 @@ export default function Navbar() {
       <nav className="sticky top-0 z-50 bg-black/40 backdrop-blur-xl border-b border-purple-500/30 px-4 py-3 shadow-lg">
         <div className="max-w-6xl mx-auto flex items-center justify-between">
           {/* Logo */}
-          <Link to="/" className="flex items-center gap-2">
+          <Link to="/main-dashboard" className="flex items-center gap-2">
             <RiShieldKeyholeLine className="text-cyan-400 text-2xl" />
             <span className="font-display text-xl text-transparent bg-gradient-to-r from-cyan-400 to-purple-500 bg-clip-text hidden sm:block">
               RippleGate

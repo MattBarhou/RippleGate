@@ -29,6 +29,7 @@ export default function MyTickets() {
         setUserLoading(true);
         setAuthError(null);
         const response = await fetchCurrentUser();
+        console.log(response);
         setUser(response.data);
       } catch (error) {
         console.error("Authentication error:", error);

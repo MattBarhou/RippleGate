@@ -7,6 +7,40 @@ export const trimUserData = (userData) => {
   };
 };
 
+// Function to format relative time
+export const formatRelativeTime = (timestamp) => {
+  const now = new Date();
+  const activityTime = new Date(timestamp);
+  const diffInSeconds = Math.floor((now - activityTime) / 1000);
+
+  if (diffInSeconds < 60) {
+    return "just now";
+  } else if (diffInSeconds < 3600) {
+    const minutes = Math.floor(diffInSeconds / 60);
+    return `${minutes} ${minutes === 1 ? "minute" : "minutes"} ago`;
+  } else if (diffInSeconds < 86400) {
+    const hours = Math.floor(diffInSeconds / 3600);
+    return `${hours} ${hours === 1 ? "hour" : "hours"} ago`;
+  } else {
+    const days = Math.floor(diffInSeconds / 86400);
+    return `${days} ${days === 1 ? "day" : "days"} ago`;
+  }
+};
+
+// get status color
+export const getStatusColor = (status) => {
+  switch (status) {
+    case "confirmed":
+      return "text-green-400";
+    case "pending":
+      return "text-yellow-400";
+    case "failed":
+      return "text-red-400";
+    default:
+      return "text-gray-400";
+  }
+};
+
 // Currency converter helpers
 const COINGECKO_API_URL = "https://api.coingecko.com/api/v3";
 
