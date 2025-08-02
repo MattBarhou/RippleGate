@@ -49,7 +49,7 @@ export default function EventList() {
         </div>
       ) : (
         <div
-          className="overflow-y-auto pr-2 custom-scrollbar flex-grow"
+          className="overflow-y-auto pr-2 custom-scrollbar scroll-smooth flex-grow"
           style={{ maxHeight: "500px" }}
         >
           <div className="grid grid-cols-1 gap-4">
