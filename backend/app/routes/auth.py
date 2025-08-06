@@ -122,7 +122,6 @@ def login():
 
         resp = make_response(jsonify({
             "message": "Login successful",
-            "token": token,
             "user_id": user.id,
             "email": email
         }), 200)

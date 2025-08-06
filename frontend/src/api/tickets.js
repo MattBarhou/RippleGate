@@ -36,30 +36,6 @@ export const getUserTickets = async (userId) => {
   }
 };
 
-// Verify ticket ownership
-export const verifyTicket = async (ticketId) => {
-  try {
-    const response = await axios.get(`${API_URL}verify/${ticketId}`, {
-      withCredentials: true,
-    });
-    return response.data;
-  } catch (error) {
-    throw error.response?.data || error.message;
-  }
-};
-
-// Get user NFTs from XRPL
-export const getUserNFTs = async (walletAddress) => {
-  try {
-    const response = await axios.get(`${API_URL}nfts/${walletAddress}`, {
-      withCredentials: true,
-    });
-    return response.data;
-  } catch (error) {
-    throw error.response?.data || error.message;
-  }
-};
-
 // Get recent ticket activity
 export const getRecentActivity = async () => {
   try {

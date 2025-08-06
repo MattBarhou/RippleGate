@@ -3,6 +3,8 @@ from app import db
 from app.models import Ticket, Event, User
 from app.services.xrp import XRPLService
 from datetime import datetime
+from jwt import decode
+import os
 
 tickets = Blueprint('tickets', __name__)
 xrpl_service = XRPLService()
@@ -104,52 +106,8 @@ def get_user_tickets(user_id):
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
-@tickets.route('/verify/<ticket_id>', methods=['GET'])
-def verify_ticket(ticket_id):
-    if request.method == 'OPTIONS':
-        return handle_options()
-    
-    try:
-        ticket = Ticket.query.get(ticket_id)
-        if not ticket:
-            return jsonify({'error': 'Ticket not found'}), 404
-        
-        if not ticket.nft_id or not ticket.user:
-            return jsonify({'verified': False, 'reason': 'NFT not minted or user not found'}), 200
-        
-        # Verify on-chain ownership
-        is_verified = xrpl_service.verify_nft_ownership(ticket.nft_id, ticket.user.wallet_address)
-        
-        return jsonify({
-            'verified': is_verified,
-            'ticket': ticket.to_json(),
-            'nft_id': ticket.nft_id
-        }), 200
-        
-    except Exception as e:
-        return jsonify({'error': str(e)}), 500
 
-@tickets.route('/nfts/<wallet_address>', methods=['GET'])
-def get_user_nfts(wallet_address):
-    if request.method == 'OPTIONS':
-        return handle_options()
-    
-    try:
-        nfts_result = xrpl_service.get_user_nfts(wallet_address)
-        
-        if nfts_result['success']:
-            return jsonify({
-                'success': True,
-                'nfts': nfts_result['nfts']
-            }), 200
-        else:
-            return jsonify({
-                'success': False,
-                'error': nfts_result.get('error', 'Failed to fetch NFTs')
-            }), 500
-            
-    except Exception as e:
-        return jsonify({'error': str(e)}), 500
+
 
 @tickets.route('/activity', methods=['GET'])
 def get_recent_activity():

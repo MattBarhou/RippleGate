@@ -1,4 +1,3 @@
-import React, { useState } from "react";
 import {
   FaTicketAlt,
   FaMapMarkerAlt,
@@ -9,15 +8,9 @@ import {
   FaTimesCircle,
   FaSpinner,
   FaExternalLinkAlt,
-  FaShieldAlt,
 } from "react-icons/fa";
-import { verifyTicket } from "../api/tickets";
-import { toast } from "react-toastify";
 
 export default function TicketDisplay({ ticket }) {
-  const [isVerifying, setIsVerifying] = useState(false);
-  const [verificationResult, setVerificationResult] = useState(null);
-
   // Format price to display in XRP with 2 decimal places
   const formattedPrice = parseFloat(ticket.price).toFixed(2);
 
@@ -85,31 +78,6 @@ export default function TicketDisplay({ ticket }) {
   };
 
   const statusInfo = getStatusInfo(ticket.status);
-
-  const handleVerifyTicket = async () => {
-    if (!ticket.nft_id) {
-      toast.error("No NFT ID available for verification");
-      return;
-    }
-
-    setIsVerifying(true);
-    try {
-      const result = await verifyTicket(ticket.id);
-      setVerificationResult(result);
-
-      if (result.verified) {
-        toast.success("Ticket ownership verified on XRPL!");
-      } else {
-        toast.warning("Ticket verification failed");
-      }
-    } catch (error) {
-      toast.error(
-        "Error verifying ticket: " + (error.error || "Unknown error")
-      );
-    } finally {
-      setIsVerifying(false);
-    }
-  };
 
   const handleViewTransaction = () => {
     if (ticket.transaction_hash) {
@@ -184,70 +152,8 @@ export default function TicketDisplay({ ticket }) {
           </div>
         </div>
 
-        {/* NFT Details */}
-        {ticket.nft_id && (
-          <div className="bg-purple-500/10 rounded-xl p-3 mb-4 border border-purple-500/20">
-            <div className="flex items-center gap-2 mb-2">
-              <FaShieldAlt className="text-purple-400" />
-              <span className="text-purple-400 font-medium text-sm">
-                NFT Details
-              </span>
-            </div>
-            <div className="text-xs text-gray-400 break-all">
-              <strong>NFT ID:</strong> {ticket.nft_id}
-            </div>
-          </div>
-        )}
-
-        {/* Verification Result */}
-        {verificationResult && (
-          <div
-            className={`rounded-xl p-3 mb-4 border ${
-              verificationResult.verified
-                ? "bg-green-500/10 border-green-500/20"
-                : "bg-red-500/10 border-red-500/20"
-            }`}
-          >
-            <div className="flex items-center gap-2">
-              {verificationResult.verified ? (
-                <FaCheckCircle className="text-green-400" />
-              ) : (
-                <FaTimesCircle className="text-red-400" />
-              )}
-              <span
-                className={`font-medium text-sm ${
-                  verificationResult.verified
-                    ? "text-green-400"
-                    : "text-red-400"
-                }`}
-              >
-                {verificationResult.verified
-                  ? "Ownership Verified"
-                  : "Verification Failed"}
-              </span>
-            </div>
-          </div>
-        )}
-
         {/* Action Buttons */}
         <div className="flex gap-2">
-          {ticket.status === "confirmed" && ticket.nft_id && (
-            <button
-              onClick={handleVerifyTicket}
-              disabled={isVerifying}
-              className="flex-1 flex items-center justify-center gap-2 py-2 px-3 rounded-xl bg-gradient-to-r from-purple-500/20 to-cyan-500/20 text-white border border-purple-500/30 hover:border-cyan-400/50 transition-all font-medium disabled:opacity-50"
-            >
-              {isVerifying ? (
-                <FaSpinner className="animate-spin" />
-              ) : (
-                <FaShieldAlt />
-              )}
-              <span className="text-sm">
-                {isVerifying ? "Verifying..." : "Verify"}
-              </span>
-            </button>
-          )}
-
           {ticket.transaction_hash && (
             <button
               onClick={handleViewTransaction}
