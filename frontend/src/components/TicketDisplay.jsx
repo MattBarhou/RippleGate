@@ -81,7 +81,7 @@ export default function TicketDisplay({ ticket }) {
 
   const handleViewTransaction = () => {
     if (ticket.transaction_hash) {
-      // Open XRPL testnet explorer
+      /// Open XRPL testnet explorer
       window.open(
         `https://testnet.xrpl.org/transactions/${ticket.transaction_hash}`,
         "_blank"
