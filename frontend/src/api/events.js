@@ -1,6 +1,8 @@
 import axios from "axios";
 
-const API_URL = "http://localhost:5000/api/event/";
+const API_URL = import.meta.env.VITE_API_URL
+  ? `${import.meta.env.VITE_API_URL.replace("/auth", "")}/event/`
+  : "https://ripplegate.onrender.com/api/event/";
 
 // Get all events
 export const getEvents = async () => {
