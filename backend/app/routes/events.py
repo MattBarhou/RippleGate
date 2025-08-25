@@ -11,7 +11,9 @@ event = Blueprint('event', __name__)
 def get_events():
     if request.method == 'OPTIONS':
         response = make_response()
-        response.headers.add('Access-Control-Allow-Origin', 'http://localhost:5173')
+        origin = request.headers.get('Origin')
+        if origin in ['http://localhost:5173', 'https://ripplegate-1.onrender.com']:
+            response.headers.add('Access-Control-Allow-Origin', origin)
         response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization')
         response.headers.add('Access-Control-Allow-Credentials', 'true')
         return response, 200
@@ -25,7 +27,9 @@ def get_events():
 def create_event(): 
     if request.method == 'OPTIONS':
         response = make_response()
-        response.headers.add('Access-Control-Allow-Origin', 'http://localhost:5173')
+        origin = request.headers.get('Origin')
+        if origin in ['http://localhost:5173', 'https://ripplegate-1.onrender.com']:
+            response.headers.add('Access-Control-Allow-Origin', origin)
         response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization')
         response.headers.add('Access-Control-Allow-Credentials', 'true')
         return response, 200
