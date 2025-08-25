@@ -14,7 +14,7 @@ const api = axios.create({
 
 export const register = async (userData) => {
   try {
-    const response = await api.post(`${API_URL}/register`, userData, {
+    const response = await api.post(`/register`, userData, {
       withCredentials: true,
     });
     return response;
@@ -26,7 +26,7 @@ export const register = async (userData) => {
 
 export const login = async (userData) => {
   try {
-    const response = await api.post(`${API_URL}/login`, userData, {
+    const response = await api.post(`/login`, userData, {
       withCredentials: true,
     });
     return response;
@@ -38,7 +38,7 @@ export const login = async (userData) => {
 
 export const fetchCurrentUser = async () => {
   try {
-    const response = await api.get(`${API_URL}/me`, {
+    const response = await api.get(`/me`, {
       withCredentials: true,
     });
     return response;

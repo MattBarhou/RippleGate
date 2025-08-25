@@ -17,7 +17,9 @@ def create_app():
     # Set up cors to allow requests from the react frontend
     CORS(app, 
          origins=["http://localhost:5173", "https://ripplegate-1.onrender.com"],
-         supports_credentials=True)
+         supports_credentials=True,
+         allow_headers=["Content-Type", "Authorization"],
+         methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"])
 
     # Register blueprints
     from .models import User
