@@ -89,7 +89,9 @@ def register():
             "email": email
         }), 200)
 
-        resp.set_cookie("token", token, httponly=True, secure=False, samesite="Lax")
+        # Set secure=True for production (HTTPS), False for development
+        is_production = os.getenv("FLASK_ENV") == "production" or "onrender.com" in request.host
+        resp.set_cookie("token", token, httponly=True, secure=is_production, samesite="None" if is_production else "Lax")
         return resp
         
     except Exception as e:
@@ -132,7 +134,9 @@ def login():
             "email": email
         }), 200)
 
-        resp.set_cookie("token", token, httponly=True, secure=False, samesite="Lax")
+        # Set secure=True for production (HTTPS), False for development
+        is_production = os.getenv("FLASK_ENV") == "production" or "onrender.com" in request.host
+        resp.set_cookie("token", token, httponly=True, secure=is_production, samesite="None" if is_production else "Lax")
         return resp
         
     except Exception as e:
